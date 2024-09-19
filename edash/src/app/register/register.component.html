@@ -21,6 +21,6 @@
       <label for="email">E-mail:</label>
       <input id="email" type="email" formControlName="email">
     </div>
-    <button type="submit" [disabled]="!registerForm.valid">Cadastrar</button>
+    <button type="submit" (click)="onSubmit()">Cadastrar</button>
   </form>
 </div>

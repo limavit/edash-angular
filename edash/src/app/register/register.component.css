@@ -51,3 +51,12 @@ button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
+.success-message {
+  color: green;
+  margin-top: 10px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
