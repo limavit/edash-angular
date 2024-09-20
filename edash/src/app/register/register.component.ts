@@ -4,11 +4,13 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { AuthService } from '../services/auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, NgxMaskDirective, NgxMaskPipe],
+  providers: [AuthService, provideNgxMask()],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
@@ -34,7 +36,7 @@ export class RegisterComponent implements OnInit {
       name: ['', Validators.required],
       phone: ['', Validators.required],
       birthDate: ['', Validators.required],
-      cpf: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
+      cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
       email: ['', [Validators.required, Validators.email]]
     });
   }
@@ -46,12 +48,14 @@ export class RegisterComponent implements OnInit {
     if (this.registerForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       console.log('Formulário válido, enviando para API...');
-      this.authService.registerUser(this.registerForm.value).subscribe({
+      const formData = {...this.registerForm.value};
+      formData.cpf = formData.cpf.replace(/\D/g, '');
+      
+      this.authService.registerUser(formData).subscribe({
         next: (response) => {
           console.log('Cadastro realizado com sucesso:', response);
           this.isSubmitting = false;
-          // Redirecionar para a página de login ou dashboard após o cadastro
-          this.router.navigate(['/login']); // Ajuste o caminho conforme necessário
+          this.router.navigate(['/login']);
         },
         error: (error) => {
           console.error('Erro ao cadastrar:', error);
